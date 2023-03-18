@@ -1,4 +1,33 @@
 // AppContext.tsx, simple context api example
+
+/*
+// Wrap your main component like this
+import { AppProvider } from "@/context/AppContext";
+
+
+
+export default function Component({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+   
+        <AppProvider>
+
+              <main className="w-full h-full  flex flex-col bg-[#242424] relative pointer-events-auto">
+                {children}
+              </main>
+
+        </AppProvider>
+
+  );
+}
+
+*/
+
+
+
 "use client";
 import {
   createContext,
