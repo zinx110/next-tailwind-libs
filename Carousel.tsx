@@ -2,8 +2,11 @@
 
 "use client";
 //import Icon from "@/lib/Icon"; // I've already added the icon component inside this for easy use, so no need to import that for now. But separating these into different files would make it easier to work with. 
+
+
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import CarouselImage from "./CarouselImage"; // Your component to put in each slider
 interface iconProp {
   img: string;
 }
@@ -203,3 +206,4 @@ const slides = [
     img: "/products/headphone.png",
   },
 ];
+
