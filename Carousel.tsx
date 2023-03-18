@@ -8,7 +8,7 @@ interface iconProp {
   img: string;
 }
 
-const Carousel = () => {
+const Carousel = ({ data }: { data: any }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const arrowClicked = (dir: "left" | "right") => {
     let newIndex;
@@ -33,7 +33,7 @@ const Carousel = () => {
       } else {
         setCurrentIndex(0);
       }
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(timer);
   }, [currentIndex]);
@@ -48,23 +48,26 @@ const Carousel = () => {
           currentIndex={currentIndex}
         />
       ))}
+      <div className="w-full h-full absolute pointer-events-none pr-24">
+        <div className="w-full h-full relative  overflow-hidden">
+          <LeftArrowButton
+            place="left"
+            img={"/assets/arrowleft.svg"}
+            onClick={() => {
+              arrowClicked("left");
+            }}
+          />
+          <RightArrowButton
+            place="right"
+            img={"/assets/arrowRight.svg"}
+            onClick={() => {
+              arrowClicked("right");
+            }}
+          />
+        </div>
+      </div>
 
-      <ArrowButton
-        place="left"
-        img={"/assets/arrowleft.svg"}
-        onClick={() => {
-          arrowClicked("left");
-        }}
-      />
-      <ArrowButton
-        place="right"
-        img={"/assets/arrowRight.svg"}
-        onClick={() => {
-          arrowClicked("right");
-        }}
-      />
-
-      <div className="w-full gap-4 flex bottom-2 justify-center py-2 absolute">
+      <div className="w-full gap-4 flex bottom-2 justify-center mb-16 absolute">
         {slides.map((slide, key) => (
           <DotIcon
             key={slide.img}
@@ -87,13 +90,31 @@ interface ArrowButtonProps {
   onClick: () => void;
 }
 
-const ArrowButton = ({ place, img, onClick }: ArrowButtonProps) => {
+const LeftArrowButton = ({ place, img, onClick }: ArrowButtonProps) => {
   return (
     <div
-      className={`-${place}-14 group-hover:${place}-5 absolute top-[50%] -translate-x-0 translate-y-[-50%]  text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer  hover:bg-white/20 duration-500`}
+      className={`-left-14 group-hover:left-5 absolute top-[50%] -translate-x-0 translate-y-[-50%]  text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer  hover:bg-white/20 duration-500 pointer-events-auto`}
       onClick={onClick}
     >
       <Icon img={img} />
+    </div>
+  );
+};
+const RightArrowButton = ({ place, img, onClick }: ArrowButtonProps) => {
+  return (
+    <div
+      className={`-right-14 group-hover:right-5 absolute top-[50%] -translate-x-0 translate-y-[-50%]  text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer  hover:bg-white/20 duration-500 pointer-events-auto`}
+      onClick={onClick}
+    >
+      <Icon img={img} />
+    </div>
+  );
+};
+
+const Icon = ({ img }: iconProp) => {
+  return (
+    <div className="w-[32px] h-[32px] relative flex justify-center items-center">
+      <Image alt="." src={img} fill className="object-cover" />
     </div>
   );
 };
@@ -105,7 +126,7 @@ interface DotIconProps {
 
 const DotIcon = ({ onClick, active }: DotIconProps) => (
   <button
-    className={`w-5 h-5 rounded-full ${
+    className={`w-4 h-4 rounded-full ${
       active ? "bg-[#A100ED]" : "bg-white/80 hover:bg-white/50"
     } `}
     onClick={onClick}
@@ -113,42 +134,72 @@ const DotIcon = ({ onClick, active }: DotIconProps) => (
 );
 
 interface SingleSlideProps {
-  slide: { img: string };
+  slide: {
+    rating?: number | undefined;
+    img?: string | any;
+    name: string;
+    name2: string;
+    subname: string;
+    description: string;
+  };
   index: number;
   currentIndex: number;
+  children?: React.ReactNode;
 }
-const SingleSlide = ({ slide, index, currentIndex }: SingleSlideProps) => {
-  const [position, setPosition] = useState(index * 100);
+
+const SingleSlide = ({
+  slide,
+  index,
+  currentIndex,
+  children,
+}: SingleSlideProps) => {
+  const [position, setPosition] = useState(index - currentIndex);
+
   useEffect(() => {
     const pos = index - currentIndex;
 
-    setPosition(pos * 100);
+    setPosition(pos);
   }, [index, currentIndex]);
 
   return (
     <div
-      style={{ backgroundImage: `url(${slide.img})` }}
-      className={`absolute bg-gradient-to-b from-[rgb(161,0,237)]/25 to-[#DA00FE] backdrop-blur-sm w-full h-full rounded-2xl  translate-x-[${position}%] bg-center transition-all duration-500`}
-    ></div>
+      className={`
+${position < 0 ? "-translate-x-full" : ""}
+${position === 0 ? "-translate-x-0" : ""}
+${position > 0 ? "translate-x-full" : ""}
+      absolute  w-full h-full rounded-2xl bg-center transition-all duration-500 delay-100`}
+    >
+      <CarouselImage data={slide} />
+    </div>
   );
 };
 
 const slides = [
   {
-    img: "https://images.pexels.com/photos/1309407/pexels-photo-1309407.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
+    name: "Oculus",
+    name2: "VR",
+    subname: "Virtual Reality",
+    description:
+      "VR box 360 original complete geme.VR gaming complete set of 2 remotes.",
+    rating: 4.3,
+    img: "/products/oculus.png",
   },
   {
-    img: "https://images.pexels.com/photos/1307929/pexels-photo-1307929.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
+    name: "Gaming",
+    name2: "Combo",
+    subname: "Mouse + Keyboard",
+    description:
+      "Gamdias Hermes Lite Mechanical Gaming Keyboard and mouse set.",
+    rating: 3.9,
+    img: "/products/mkeyboard.png",
   },
   {
-    img: "https://images.pexels.com/photos/935490/pexels-photo-935490.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    name: "Gaming",
+    name2: "Headphone",
+    subname: "Emersive surround",
+    description:
+      "Gamdias Hermes Lite Gaming Headphone. Complete surround sound with ANC and noise cancellation technology.",
+    rating: 3.9,
+    img: "/products/headphone.png",
   },
 ];
-
-const Icon = ({ img }: iconProp) => {
-  return (
-    <div className="w-[32px] h-[32px] relative flex justify-center items-center">
-      <Image alt="." src={img} fill className="object-cover" />
-    </div>
-  );
-};
